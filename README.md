@@ -1,79 +1,99 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Orderbook Synchronization React Native App
 
-# Getting Started
+This project implements a React Native application that displays a real-time orderbook using WebSocket updates. It's designed to efficiently handle orderbook data, manage WebSocket connections, and provide a robust user interface for viewing bids and asks.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+## Setup Instructions
 
-## Step 1: Start the Metro Server
+1. Clone the repository:
+   ```
+   git clone https://github.com/hasancanzubaroglu/OrderbookApp
+   cd OrderbookApp
+   ```
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+2. Install dependencies:
+   ```
+   npm install
+   ```
 
-To start Metro, run the following command from the _root_ of your React Native project:
+3. Set up environment variables:
+   Create a `.env` file in the root directory and add the following:
+   ```
+   ORDERBOOK_WEBSOCKET_URL=wss://api.testnet.rabbitx.io/ws
+   ORDERBOOK_WEBSOCKET_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIwIiwiZXhwIjo1MjYyNjUyMDEwfQ.x_245iYDEvTTbraw1gt4jmFRFfgMJb-GJ-hsU9HuDik
+   ORDERBOOK_WEBSOCKET_CHANNEL=orderbook:BTC-USD
+   ```
 
-```bash
-# using npm
-npm start
+4. Install CocoaPods (for iOS):
+   ```
+   cd ios
+   pod install
+   cd ..
+   ```
 
-# OR using Yarn
-yarn start
+5. Run the application:
+    - For iOS:
+      ```
+      npx react-native run-ios
+      ```
+    - For Android:
+      ```
+      npx react-native run-android
+      ```
+
+## Project Structure
+
+```
+my-orderbook-app/
+├── src/
+│   ├── components/
+│   │   └── Orderbook.tsx
+│   ├── hooks/
+│   │   └── useOrderbookData.ts
+│   ├── services/
+│   │   └── websocketService.ts
+│   ├── types/
+│   │   └── orderbook.types.ts
+│   │   └── .env.d.ts
+│   ├── constants/
+│   │   └── orderbook.constants.ts
+│   ├── utils/
+│   ├── screens/
+│   └── App.tsx
+├── .env
+├── package.json
+├── tsconfig.json
+└── README.md
 ```
 
-## Step 2: Start your Application
+- `components/Orderbook.tsx`: Main UI component for displaying the orderbook.
+- `hooks/useOrderbookData.ts`: Custom hook for managing orderbook data.
+- `services/websocketService.ts`: WebSocket service using Centrifuge.
+- `types/orderbook.types.ts`: TypeScript type definitions for orderbook-related data.
+- `types/.env.d.ts`: TypeScript declarations for environment variables.
+- `constants/orderbook.constants.ts`: Constants used in the orderbook functionality.
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+## Approach Taken
 
-### For Android
+1. **Modular Architecture**: We've separated concerns by creating distinct modules for UI components, data management, WebSocket handling, and type definitions.
 
-```bash
-# using npm
-npm run android
+2. **Type Safety**: Extensive use of TypeScript, including custom type definitions and enums, ensures type safety throughout the application.
 
-# OR using Yarn
-yarn android
-```
+3. **Real-time Data Handling**: Utilizing the Centrifuge library for WebSocket connections, with efficient data processing in the `useOrderbookData` hook.
 
-### For iOS
+4. **Optimized State Updates**: Efficient use of data structures (Map) and sorting algorithms for updating orderbook entries.
 
-```bash
-# using npm
-npm run ios
+5. **Connection Management**: Robust WebSocket connection handling with automatic reconnection logic.
 
-# OR using Yarn
-yarn ios
-```
+6. **Constant Management**: Centralized constants for easy configuration and maintenance.
 
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
+## Challenges Faced and Solutions
 
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
+1. **WebSocket Reliability**: Implemented a reconnection strategy with error handling.
+2. **Performance Optimization**: Utilized efficient data structures and update logic.
+3. **Lost Package Handling**: Implemented sequence number checking to detect potential lost packages.
+4. **Cross-Platform Compatibility**: Ensured consistent styling and behavior across iOS and Android.
 
-## Step 3: Modifying your App
+## Possible Improvements
 
-Now that you have successfully run the app, let's modify it.
-
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+1. **Better Error Recovery**: Implement full orderbook snapshot requests on detected discrepancies.
+2. **Update Throttling**: Implement throttling for high-frequency update periods.
